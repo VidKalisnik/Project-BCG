@@ -2,26 +2,54 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract nftFactory is ERC721URIStorage, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+contract nftFactory is ERC721URIStorage {
+    
+    uint256 private tokenId = 0;
+    uint16 public firstC = 0;
+    uint16 private secondC = 0;
 
-    constructor() ERC721("Comic", "COM") {}
+    mapping(address => uint256) public addressToTokenId;
 
-    function mintNFT(address recipient, string memory tokenURI)
+    constructor() ERC721("Cloud", "CLO") {}
+
+    function mintNFT(string memory tokenURI)
         public
+        onlyOneNFT()
         returns (uint256)
     {
-        _tokenIds.increment();
-
-        uint256 newItemId = _tokenIds.current();
-        _mint(recipient, newItemId);
+        uint256 newItemId = tokenId;
+        _safeMint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI);
+        addressToTokenId[msg.sender] = newItemId;
+        tokenId++;
 
         return newItemId;
+    }
+
+    function getTokenId() public view returns(uint256){
+        return addressToTokenId[msg.sender];
+    }
+
+    function increaceFirstC() public {
+        firstC++;
+    }
+
+    function increaceSecondC() public {
+        secondC++;
+    }
+
+    function getFirstC() public view returns(uint16){
+        return firstC;
+    }
+
+    function getSecondC() public view returns(uint16){
+        return secondC;
+    }
+
+    modifier onlyOneNFT(){
+        require(balanceOf(msg.sender) == 0);
+        _;
     }
 }
