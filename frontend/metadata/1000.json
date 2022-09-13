@@ -1,0 +1,10 @@
+{
+  "name": "Access token #1000",
+  "description": "Access to the graphic novel",
+  "attributes": [
+    {
+      "trait_type": "AccessType",
+      "value": "first class"
+    }
+  ]
+}
